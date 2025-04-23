@@ -20,7 +20,15 @@ class MoviedbDatasource extends MoviesDatasource {
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async{
     
-final response = await dio.get('/movie/now_playing');
+final response = await dio.get('/movie/now_playing',
+    queryParameters: {
+      'page': page,
+    }
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Error al cargar las peliculas');
+  }
 final movieDBResponse = MovieDbResponse.fromJson(response.data);
 final List<Movie> movies = movieDBResponse.results
 .where((e)=> e.posterPath != 'no-poster')

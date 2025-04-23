@@ -9,7 +9,7 @@ class AppTheme {
 ThemeData getTheme()=>ThemeData(
 
 useMaterial3: true,
-colorSchemeSeed: const Color.fromRGBO(40, 98, 245, 1),
+colorSchemeSeed: const Color.fromARGB(255, 191, 226, 255),
 
 );
 
