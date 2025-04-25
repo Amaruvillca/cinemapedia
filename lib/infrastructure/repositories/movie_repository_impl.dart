@@ -33,5 +33,11 @@ class MovieRepositoryImpl extends MoviesRepository{
     // TODO: implement getUpcoming
     return datasource.getUpcoming(page: page);
   }
+  
+  @override
+  Future<Movie> getMovieiD(String id) {
+    // TODO: implement getMovieiD
+    return datasource.getMovieiD(id);
+  }
 
 }

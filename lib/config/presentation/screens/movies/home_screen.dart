@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   static const String name = 'home-screen';
-  static const String routeName = '/home';
+  static const String routeName = '/';
 
   @override
   Widget build(BuildContext context) {

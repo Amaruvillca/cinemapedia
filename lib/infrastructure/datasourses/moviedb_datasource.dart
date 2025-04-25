@@ -2,6 +2,8 @@ import 'package:cinemapedia/config/constants/enviroment.dart';
 import 'package:cinemapedia/domain/datasources/movies_datasources.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/infrastructure/mapper/movie_mapper.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/movie_details.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/movie_movuedb.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
 import 'package:dio/dio.dart';
 
@@ -86,6 +88,24 @@ return _jsonToMovie(response.data);
   }
 return _jsonToMovie(response.data);
   }
+  
+  @override
+  Future<Movie> getMovieiD(String id) async {
+    final response = await dio.get('/movie/$id',
+    
+  );
+  if (response.statusCode != 200) {
+    throw Exception('Error al cargar las peliculas');
+  }
+  final movieDBResponse = MovieDetails.fromJson(response.data);
+  final Movie movie = MovieMapper.movieDetailsEntity(movieDBResponse);
+
+  return movie;
+  }
+  
+  
+  
+ 
   
 
   
