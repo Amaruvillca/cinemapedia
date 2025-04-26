@@ -103,6 +103,22 @@ return _jsonToMovie(response.data);
   return movie;
   }
   
+  @override
+  Future<List<Movie>> setarchMovie(String query) async {
+    // TODO: implement setarchMovie
+    final response = await dio.get('/search/movie',
+    queryParameters: {
+      'query': query,
+    }
+    
+  );
+  if (response.statusCode != 200) {
+    throw Exception('Error al cargar las peliculas');
+  }
+  print("peticion realizada");
+return _jsonToMovie(response.data);
+  }
+  
   
   
  

@@ -2,13 +2,13 @@
 
 class MovieDetails {
     final bool adult;
-    final String backdropPath;
+    final String? backdropPath;
     final BelongsToCollection? belongsToCollection;
     final int budget;
     final List<Genre> genres;
     final String homepage;
     final int id;
-    final String imdbId;
+    final String? imdbId;
     final List<String> originCountry;
     final String originalLanguage;
     final String originalTitle;
@@ -59,7 +59,7 @@ class MovieDetails {
 
     factory MovieDetails.fromJson(Map<String, dynamic> json) => MovieDetails(
         adult: json["adult"],
-        backdropPath: json["backdrop_path"] ??"",
+        backdropPath: json["backdrop_path"] ??"https://easimages.basnop.com/default-image_600.png",
         belongsToCollection: json["belongs_to_collection"] == null ? null : BelongsToCollection.fromJson(json["belongs_to_collection"]),
         budget: json["budget"],
         genres: List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
@@ -71,7 +71,7 @@ class MovieDetails {
         originalTitle: json["original_title"],
         overview: json["overview"],
         popularity: json["popularity"]?.toDouble(),
-        posterPath: json["poster_path"],
+        posterPath: json["poster_path"]??"https://easimages.basnop.com/default-image_600.png",
         productionCompanies: List<ProductionCompany>.from(json["production_companies"].map((x) => ProductionCompany.fromJson(x))),
         productionCountries: List<ProductionCountry>.from(json["production_countries"].map((x) => ProductionCountry.fromJson(x))),
         releaseDate: DateTime.parse(json["release_date"]),
@@ -132,8 +132,8 @@ class BelongsToCollection {
     factory BelongsToCollection.fromJson(Map<String, dynamic> json) => BelongsToCollection(
         id: json["id"],
         name: json["name"],
-        posterPath: json["poster_path"],
-        backdropPath: json["backdrop_path"],
+        posterPath: json["poster_path"] ??"https://easimages.basnop.com/default-image_600.png",
+        backdropPath: json["backdrop_path"] ??"https://easimages.basnop.com/default-image_600.png",
     );
 
     Map<String, dynamic> toJson() => {

@@ -39,5 +39,11 @@ class MovieRepositoryImpl extends MoviesRepository{
     // TODO: implement getMovieiD
     return datasource.getMovieiD(id);
   }
+  
+  @override
+  Future<List<Movie>> setarchMovie(String query) {
+    // TODO: implement setarchMovie
+    return datasource.setarchMovie(query);
+  }
 
 }
