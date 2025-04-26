@@ -1,16 +1,21 @@
 import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/presentation/provider/search/search_movie_provider.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 
 typedef SeachMOviesCallback = Future<List<Movie>> Function(String query);
 
+
 class SearchMovie extends SearchDelegate<Movie?> {
 
   final SeachMOviesCallback seachMovie;
+   List<Movie> moviesList ;
+  final WidgetRef ref;
   final StreamController<List<Movie>> debounceMovie = StreamController.broadcast();
   Timer? _debounceTimer;
   final bool isLoading = false;
@@ -28,11 +33,30 @@ class SearchMovie extends SearchDelegate<Movie?> {
       }
       final movies = await seachMovie(query);
       debounceMovie.add(movies);
-      
+      //actualizar el provider de busqueda
+      ref.read(seachQueryMOviesPrivider.notifier).update((state) => query);
+      ref.read(guardarListaDeBusqueda.notifier).update((state) => []);
+
+      ref.read(guardarListaDeBusqueda.notifier).update((state) => movies);
+      moviesList = movies;
+
+
+
     });
   }
 
-  SearchMovie({super.searchFieldLabel, super.searchFieldStyle, super.searchFieldDecorationTheme, super.keyboardType, super.textInputAction, super.autocorrect, super.enableSuggestions, required this.seachMovie});
+  SearchMovie( {
+    super.searchFieldLabel, 
+    super.searchFieldStyle, 
+    super.searchFieldDecorationTheme, 
+    super.keyboardType, 
+    super.textInputAction,
+     super.autocorrect, 
+     super.enableSuggestions, 
+     required this.seachMovie,
+     required this.ref,
+     required this.moviesList
+  });
   @override
   String get searchFieldLabel => 'Buscar Peliculas';
   //constrir las acciones
@@ -45,40 +69,26 @@ class SearchMovie extends SearchDelegate<Movie?> {
         child: IconButton(
           icon: const Icon(Icons.clear),
           onPressed: () {
+            ref.read(seachQueryMOviesPrivider.notifier).update((state) => '');
+            ref.read(guardarListaDeBusqueda.notifier).update((state) => []);
             query = '';
             //clearStream();
           },
         ),
       ),
+      
     ];
   }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    // TODO: implement buildLeading
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    return const Text("resultados de buscar");
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    _onQueryChanged(query);
-    // TODO: implement buildSuggestions
+  Widget builResulSearch(){
     return StreamBuilder(
       //future: seachMovie(query), 
+      initialData: moviesList,
       stream: debounceMovie.stream,
       builder: (context,snapshot){
+        
         final movies = snapshot.data ?? [];
+        //ref.read(guardarListaDeBusqueda.notifier).update((state) => []);
+        
         if(movies.isEmpty ){
           return const Center(
             child: Text('No se encontraron resultados'),
@@ -130,5 +140,30 @@ class SearchMovie extends SearchDelegate<Movie?> {
       }
       
       );
+
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    // TODO: implement buildLeading
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    return builResulSearch();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    _onQueryChanged(query);
+    // TODO: implement buildSuggestions
+    return builResulSearch();
   }
 }

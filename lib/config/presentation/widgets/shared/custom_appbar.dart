@@ -9,6 +9,7 @@ class CustomAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme.titleMedium;
     return SafeArea(
@@ -30,10 +31,20 @@ class CustomAppbar extends ConsumerWidget {
               IconButton(
                 onPressed: () {
                   final moviesRepository = ref.read(movieREpositoryProvider);
+                  final query = ref.read(seachQueryMOviesPrivider);
+                  final moviesList = ref.read(guardarListaDeBusqueda);
 
                   showSearch(context: context, delegate: SearchMovie(
-                    seachMovie: moviesRepository.setarchMovie
-                  ));
+
+                    seachMovie: moviesRepository.setarchMovie,
+                    ref: ref,
+                    moviesList: moviesList,
+                     
+                  ),
+                  query: query,
+
+                  
+                    );
                 },
                 icon: Icon(Icons.search, color: colors.primary, size: 27),
               ),
