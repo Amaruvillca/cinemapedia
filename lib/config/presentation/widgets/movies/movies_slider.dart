@@ -10,6 +10,7 @@ class MoviesSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final size = MediaQuery.of(context).size;
     return SizedBox(
       height: 230,
       width: double.infinity,
