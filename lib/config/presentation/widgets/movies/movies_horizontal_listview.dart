@@ -102,7 +102,7 @@ class _Slide extends StatelessWidget {
                     child: FadeIn(child: child),
                     onTap: () {
                       // Navigator.pushNamed(context, MovieScreen.routeName, arguments: movie);
-                      context.push('/movie/${movie.id}');
+                      context.push('/home/0/movie/${movie.id}');
                     },
                   );}
                   return Center(

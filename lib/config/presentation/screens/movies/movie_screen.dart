@@ -38,13 +38,21 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
     return Scaffold(body: _CustomSliverApp(movie));
   }
 }
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref,int movieId)  {
+  final local = ref.watch(localStorageProvider);
+  final isMovieFavorite = local.isMovieFavorite(movieId);
+  return   isMovieFavorite;
 
-class _CustomSliverApp extends StatelessWidget {
+
+});
+
+class _CustomSliverApp extends ConsumerWidget {
   final Movie movie;
   const _CustomSliverApp(this.movie);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorites = ref.watch(isFavoriteProvider(movie.id));
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context).textTheme;
     return CustomScrollView(
@@ -55,6 +63,32 @@ class _CustomSliverApp extends StatelessWidget {
         SliverAppBar(
           expandedHeight: size.height * 0.7,
           foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              onPressed: () async {
+
+                await ref.read(favoriteMOvieProvider.notifier).togggleFavorite(movie);
+                ref.invalidate(isFavoriteProvider(movie.id));
+                
+                
+
+              },
+              //icon: const Icon(Icons.favorite_border),
+              icon:
+              isFavorites.when(
+                data: (isFavorite) =>isFavorite
+                    ?  const Icon(Icons.favorite_rounded, color: Colors.red)
+                    :  const Icon(Icons.favorite_border),
+                error: (error, stackTrace) => const  Icon(Icons.error),
+
+                loading: () => const CircularProgressIndicator(strokeWidth: 2,),
+              ),
+
+              //const Icon(Icons.favorite_rounded,
+                  //color: Colors.red),
+
+            ),
+          ],
           backgroundColor: Colors.black,
           flexibleSpace: FlexibleSpaceBar(
             centerTitle: true, // Center the title
@@ -67,7 +101,7 @@ class _CustomSliverApp extends StatelessWidget {
                    (context, child, loadingProgress) {
                     if (loadingProgress == null) return FadeIn(child: child);
                     return SizedBox();
-                    
+
                   },),
                 ),
 
@@ -95,6 +129,19 @@ class _CustomSliverApp extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox.expand(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.black87, Colors.transparent],
+                        begin: Alignment.topRight,
+
+                        stops: [0.0, 0.3],
+                      ),
+                    ),
+                  ),
+                ),
+
               ],
             ),
           ),
@@ -167,12 +214,12 @@ class _CustomSliverApp extends StatelessWidget {
                     style: theme.titleLarge,
                   ),
                 ),
-                
+
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _ActorMOvie(movieId: movie.id.toString()),
                 ),
-                
+
               ],
             );
           }, childCount: 1),
@@ -204,7 +251,7 @@ class _ActorMOvie extends ConsumerWidget {
     final actores = actors[movieId]!;
     return SizedBox(
       height: 300,
-      
+
       child: ListView.builder(
         itemCount: actores.length,
         scrollDirection: Axis.horizontal,
@@ -213,18 +260,18 @@ class _ActorMOvie extends ConsumerWidget {
           return FadeInRight(
             child: Container(
               width: 135,
-              
+
               margin: const EdgeInsets.only(right: 10),
               child: Column(
                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  
+
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(actor.profilePath,
                     height: 180,
                     fit: BoxFit.cover,
-                    loadingBuilder: 
+                    loadingBuilder:
                     (context, child, loadingProgress) {
                       if (loadingProgress == null) return FadeIn(child: child);
                       return Image.network("https://cdn-icons-png.flaticon.com/512/12225/12225935.png",height: 180,fit: BoxFit.cover,);
@@ -233,11 +280,11 @@ class _ActorMOvie extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(actor.name,maxLines: 2, textAlign: TextAlign.center ,),
-                  
+
                   Text(actor.character?? "",style: TextStyle(
                     fontWeight: FontWeight.bold,
                     overflow: TextOverflow.ellipsis
-                    
+
                     ),),
                 ],
               ),

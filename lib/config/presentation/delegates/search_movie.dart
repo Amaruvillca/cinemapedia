@@ -131,7 +131,7 @@ class SearchMovie extends SearchDelegate<Movie?> {
                 ],
               ),
               onTap: () {
-                context.push('/movie/${movie.id}');
+                context.push('/home/0/movie/${movie.id}');
               },
             );
           },
